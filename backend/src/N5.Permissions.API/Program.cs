@@ -61,7 +61,11 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.Migrate();
+    
+    if (context.Database.IsRelational())
+    {
+        context.Database.Migrate();
+    }
 }
 
 app.UseMiddleware<ExceptionMiddleware>();
@@ -78,3 +82,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }

@@ -54,3 +54,11 @@ TestResult.xml
 nunit-*.xml
 
 .vscode/
+
+# Visual Studio
+.vs/
+*.csproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
