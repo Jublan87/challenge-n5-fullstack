@@ -1,10 +1,11 @@
-# N5 Permissions API
+# N5 Permissions Challenge
 
-API para gestión de permisos de empleados. Desarrollada con .NET 8, SQL Server, Elasticsearch y Kafka.
+Aplicación fullstack para gestión de permisos de empleados. Backend en .NET 8 con SQL Server, Elasticsearch y Kafka. Frontend en React + TypeScript con Material-UI.
 
 ## Requisitos
 
 - .NET SDK 8.0+
+- Node.js 22+ (LTS)
 - Docker Desktop
 
 ## Levantar servicios
@@ -15,7 +16,7 @@ docker-compose up -d
 
 Esto levanta SQL Server, Elasticsearch, Kafka, Kibana y Kafka UI.
 
-## Ejecutar la API
+## Ejecutar Backend
 
 ```bash
 cd backend/src/N5.Permissions.API
@@ -23,6 +24,18 @@ dotnet run
 ```
 
 La API corre en `http://localhost:5290`. Swagger disponible en `/swagger`.
+
+## Ejecutar Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+El frontend corre en `http://localhost:5173` (puerto por defecto de Vite).
+
+**Nota:** Se deja el .env en repositorio por ser un challenge
 
 ## Endpoints
 
@@ -72,18 +85,45 @@ cd backend
 dotnet test
 ```
 
+## Tecnologías
+
+### Backend
+
+- .NET 8
+- Entity Framework Core
+- SQL Server
+- Elasticsearch (NEST)
+- Apache Kafka (Confluent.Kafka)
+- AutoMapper
+- xUnit (tests)
+
+### Frontend
+
+- React 19
+- TypeScript
+- Vite
+- Material-UI (MUI)
+- Axios
+
 ## Estructura
 
 ```
-backend/
-├── src/
-│   ├── N5.Permissions.API/           # Controllers y configuración
-│   ├── N5.Permissions.Application/   # Handlers y DTOs
-│   ├── N5.Permissions.Domain/        # Entidades e interfaces
-│   └── N5.Permissions.Infrastructure/# Repositorios y servicios externos
-└── tests/
-    ├── N5.Permissions.UnitTests/
-    └── N5.Permissions.IntegrationTests/
+├── backend/
+│   ├── src/
+│   │   ├── N5.Permissions.API/           # Controllers y configuración
+│   │   ├── N5.Permissions.Application/   # Handlers y DTOs
+│   │   ├── N5.Permissions.Domain/        # Entidades e interfaces
+│   │   └── N5.Permissions.Infrastructure/# Repositorios y servicios externos
+│   └── tests/
+│       ├── N5.Permissions.UnitTests/
+│       └── N5.Permissions.IntegrationTests/
+└── frontend/
+    ├── src/
+    │   ├── api/                          # Cliente HTTP (axios)
+    │   ├── components/                   # Componentes React
+    │   ├── types/                        # Interfaces TypeScript
+    │   └── theme/                        # Tema Material-UI
+    └── public/
 ```
 
 ## Servicios Docker
@@ -100,6 +140,14 @@ backend/
 
 - **Kibana** (http://localhost:5601): Para ver los permisos indexados en Elasticsearch. Crear un Data View con el patrón `permissions`.
 - **Kafka UI** (http://localhost:8080): Para ver los mensajes en el topic `permissions-operations`.
+
+## Funcionalidades Frontend
+
+- Listado de permisos en tabla
+- Crear nuevo permiso (modal)
+- Editar permiso existente (modal)
+- Interfaz responsive con Material-UI
+- Manejo de estados de carga y errores
 
 ## Notas
 
