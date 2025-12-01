@@ -1,0 +1,19 @@
+# Build outputs
+**/bin/
+**/obj/
+
+# Test projects (not needed for runtime)
+tests/
+
+# IDE
+.vs/
+.vscode/
+*.user
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+

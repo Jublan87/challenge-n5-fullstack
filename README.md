@@ -1,51 +1,70 @@
 # N5 Permissions Challenge
 
-Aplicación fullstack para gestión de permisos de empleados. Backend en .NET 8 con SQL Server, Elasticsearch y Kafka. Frontend en React + TypeScript con Material-UI.
+Sistema de gestión de permisos de empleados. Backend en .NET 8, frontend en React + TypeScript.
 
-## Requisitos
-
-- .NET SDK 8.0+
-- Node.js 22+ (LTS)
-- Docker Desktop
-
-## Levantar servicios
+## Inicio rápido con Docker
 
 ```bash
-docker-compose up -d
+docker-compose up --build
 ```
 
-Esto levanta SQL Server, Elasticsearch, Kafka, Kibana y Kafka UI.
+Accesos:
 
-## Ejecutar Backend
+- App: http://localhost:3000
+- API/Swagger: http://localhost:5290/swagger
+- Kibana: http://localhost:5601
+- Kafka UI: http://localhost:8080
 
 ```bash
+docker-compose down      # detener
+docker-compose down -v   # detener y borrar datos
+```
+
+## Inicio en desarrollo local
+
+Requisitos: .NET 8, Node.js 22+, Docker
+
+```bash
+# 1. Infraestructura
+docker-compose up -d sqlserver elasticsearch kafka zookeeper kibana kafka-ui
+
+# 2. Backend
 cd backend/src/N5.Permissions.API
 dotnet run
-```
 
-La API corre en `http://localhost:5290`. Swagger disponible en `/swagger`.
-
-## Ejecutar Frontend
-
-```bash
+# 3. Frontend (en otra terminal)
 cd frontend
-npm install
-npm run dev
+npm install && npm run dev
 ```
 
-El frontend corre en `http://localhost:5173` (puerto por defecto de Vite).
+## Servicios
 
-**Nota:** Se deja el .env en repositorio por ser un challenge
+Accesos:
 
-## Endpoints
+- App: http://localhost:5173
+- API/Swagger: http://localhost:5290/swagger
+- Kibana: http://localhost:5601
+- Kafka UI: http://localhost:8080
+
+| Servicio      | Puerto | Credenciales      |
+| ------------- | ------ | ----------------- |
+| Frontend      | 5173   | -                 |
+| API           | 5290   | -                 |
+| SQL Server    | 1433   | sa / testPass-123 |
+| Elasticsearch | 9200   | -                 |
+| Kafka         | 9092   | -                 |
+| Kibana        | 5601   | -                 |
+| Kafka UI      | 8080   | -                 |
+
+## API
 
 | Método | Ruta                  | Descripción       |
 | ------ | --------------------- | ----------------- |
+| GET    | /api/permissions      | Listar permisos   |
 | POST   | /api/permissions      | Crear permiso     |
 | PUT    | /api/permissions/{id} | Modificar permiso |
-| GET    | /api/permissions      | Listar permisos   |
 
-### Crear permiso
+**Crear:**
 
 ```json
 POST /api/permissions
@@ -57,100 +76,63 @@ POST /api/permissions
 }
 ```
 
-### Modificar permiso
+**Modificar** (campos opcionales):
 
 ```json
 PUT /api/permissions/1
 {
-  "nombreEmpleado": "Juan Carlos",
-  "tipoPermiso": 2
+  "nombreEmpleado": "Juan Carlos"
 }
 ```
 
-Todos los campos son opcionales en la modificación.
-
-## Tipos de permiso
-
-| ID  | Descripción |
-| --- | ----------- |
-| 1   | Enfermedad  |
-| 2   | Tramite     |
-| 3   | Mudanza     |
-| 4   | Vacaciones  |
+**Tipos de permiso:** 1=Enfermedad, 2=Tramite, 3=Mudanza, 4=Vacaciones
 
 ## Tests
 
 ```bash
-cd backend
-dotnet test
+cd backend && dotnet test
 ```
 
-## Tecnologías
+## Arquitectura
 
-### Backend
-
-- .NET 8
-- Entity Framework Core
-- SQL Server
-- Elasticsearch (NEST)
-- Apache Kafka (Confluent.Kafka)
-- AutoMapper
-- xUnit (tests)
-
-### Frontend
-
-- React 19
-- TypeScript
-- Vite
-- Material-UI (MUI)
-- Axios
+```
+Frontend (React 19 + TS + MUI)
+    │
+    ▼
+Web API (.NET 8)
+├── CQRS (Commands/Queries separados)
+├── Repository + Unit of Work
+└── Clean Architecture (4 capas)
+    │
+    ├──► SQL Server (EF Core)
+    ├──► Elasticsearch (indexación)
+    └──► Kafka (eventos)
+```
 
 ## Estructura
 
 ```
-├── backend/
-│   ├── src/
-│   │   ├── N5.Permissions.API/           # Controllers y configuración
-│   │   ├── N5.Permissions.Application/   # Handlers y DTOs
-│   │   ├── N5.Permissions.Domain/        # Entidades e interfaces
-│   │   └── N5.Permissions.Infrastructure/# Repositorios y servicios externos
-│   └── tests/
-│       ├── N5.Permissions.UnitTests/
-│       └── N5.Permissions.IntegrationTests/
-└── frontend/
-    ├── src/
-    │   ├── api/                          # Cliente HTTP (axios)
-    │   ├── components/                   # Componentes React
-    │   ├── types/                        # Interfaces TypeScript
-    │   └── theme/                        # Tema Material-UI
-    └── public/
+backend/
+├── src/
+│   ├── N5.Permissions.API/            # Controllers, middleware
+│   ├── N5.Permissions.Application/    # Handlers, DTOs
+│   ├── N5.Permissions.Domain/         # Entidades, interfaces
+│   └── N5.Permissions.Infrastructure/ # Repos, EF, Kafka, ES
+└── tests/
+    ├── N5.Permissions.UnitTests/
+    └── N5.Permissions.IntegrationTests/
+
+frontend/src/
+├── api/         # Cliente axios
+├── components/  # React components
+├── types/       # TypeScript interfaces
+└── theme/       # MUI theme
 ```
-
-## Servicios Docker
-
-| Servicio      | Puerto | Credenciales      |
-| ------------- | ------ | ----------------- |
-| SQL Server    | 1433   | sa / testPass-123 |
-| Elasticsearch | 9200   | -                 |
-| Kafka         | 9092   | -                 |
-| Kibana        | 5601   | -                 |
-| Kafka UI      | 8080   | -                 |
-
-## Herramientas visuales
-
-- **Kibana** (http://localhost:5601): Para ver los permisos indexados en Elasticsearch. Crear un Data View con el patrón `permissions`.
-- **Kafka UI** (http://localhost:8080): Para ver los mensajes en el topic `permissions-operations`.
-
-## Funcionalidades Frontend
-
-- Listado de permisos en tabla
-- Crear nuevo permiso (modal)
-- Editar permiso existente (modal)
-- Interfaz responsive con Material-UI
-- Manejo de estados de carga y errores
 
 ## Notas
 
-- La base de datos se crea automáticamente al iniciar la API (migraciones automáticas)
-- Kafka publica eventos en cada operación (request, modify, get)
-- Elasticsearch indexa los permisos solo en POST y PUT. El GET no indexa porque es una operación de lectura que no modifica datos, y como los documentos tienen la misma estructura que la tabla, reindexar en cada consulta sobrescribiría información sin agregar valor
+- La DB se crea automáticamente al iniciar (migraciones)
+- Kafka publica en `permissions-operations` en cada operación
+- Elasticsearch indexa los permisos solo en POST y PUT. El GET no indexa porque es una operación de lectura que no modifica datos, y como los documentos tienen la misma estructura que la
+  tabla, reindexar en cada consulta sobrescribiría información sin agregar valor
+- El `.env` está en el repo por ser un challenge de evaluación

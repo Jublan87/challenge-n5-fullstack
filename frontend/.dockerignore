@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Build output (will be created in container)
+dist/
+build/
+
+# Development
+.git/
+.gitignore
+*.md
+
+# IDE
+.vscode/
+.idea/
+
+# Test files
+coverage/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Env files (will be set via Docker)
+.env.local
+.env.development
+

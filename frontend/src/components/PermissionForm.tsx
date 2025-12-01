@@ -113,8 +113,10 @@ const PermissionForm = ({
         onClose={onClose}
         maxWidth="sm"
         fullWidth
-        PaperProps={{
-          sx: { borderRadius: 3 },
+        slotProps={{
+          paper: {
+            sx: { borderRadius: 3 },
+          },
         }}
       >
         <DialogTitle
@@ -156,13 +158,15 @@ const PermissionForm = ({
               required
               disabled={loading}
               placeholder="Ej: Juan"
-              InputLabelProps={{ shrink: true }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <PersonOutlineIcon sx={{ color: 'text.secondary' }} />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                inputLabel: { shrink: true },
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PersonOutlineIcon sx={{ color: 'text.secondary' }} />
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
             <TextField
@@ -173,13 +177,15 @@ const PermissionForm = ({
               required
               disabled={loading}
               placeholder="Ej: Pérez"
-              InputLabelProps={{ shrink: true }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <BadgeOutlinedIcon sx={{ color: 'text.secondary' }} />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                inputLabel: { shrink: true },
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <BadgeOutlinedIcon sx={{ color: 'text.secondary' }} />
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
             <TextField
